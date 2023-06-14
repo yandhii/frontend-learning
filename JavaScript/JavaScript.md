@@ -333,6 +333,9 @@ arr2 = [...arr1]是拷贝，arr2=arr1只是拷贝一个对arr1的引用
 # JSON
 ## parse(jsonString): 将JSON string转为object
 ## stringify(jsonFormatObject): 将json格式object转为string
+日期字符串化: 在 JSON 中，不允许日期对象。JSON.stringify() 函数将把任何日期转换为字符串。  
+函数字符串化： 在 JSON 中，不允许函数作为对象值。JSON.stringify() 函数将从 JavaScript 对象删除任何函数，包括键和值：
+**避免在JSON中使用函数**
 # 运算符
 ## 三元运算符： ```a ? b : c ``` = if a return b else return c
 多重三元运算符: ```a ? b : c > 5 ? d : e ``` = 
