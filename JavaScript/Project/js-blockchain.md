@@ -82,13 +82,15 @@ console.log(key.verify(msgHash, signature));
 4. 将挖掘成功的块加入链里
 # 钱包
 ## 创建交易
-- 1. 创建交易
-- 2. 在交易的哈希值上ECDSA签名
-- 3. 检查交易是否有效：
-  - 3.1 from和to是否为空
-  - 3.2 amount是否大于
-  - 3.3 签名是否存在且不为空
-  - 3.4 余额是否足够
+- 创建交易
+- 在交易的哈希值上ECDSA签名
+- 检查交易是否有效：
+  - from和to是否为空
+  - amount是否大于
+  - 签名是否存在且不为空
+  - 余额是否足够
+- **防止double-spending**
+  在当前交易池里寻找所有同一地址的交易，确保当前交易的amount+所有在池子里的交易的amount小于等于钱包的balance。
 ## PoW
 注意不能js里把crypto-js库的SHA256值转换为number。这是因为SHA256是256位的，最大值为2^256-1,而js number的最大安全整数值是2^53-1。  
 注意一个计算target的算法是2**(256-difficultyBits)，该方法使用difficultyBits是因为从0开始。假如difficulty是4，那么256-difficultyBits为252。而difficultyBits对应的位实际位251,因此这样确保了算法的正确。
