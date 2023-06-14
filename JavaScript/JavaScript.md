@@ -295,6 +295,7 @@ console.log(veg.name);
 set之后，可以直接对 obj.name赋值: obj=5
 ## 方法：
 hasOwnProperty(proprtyName): 判断一个obj是否有某个属性
+Object.values()： object会被打印为[object Object]， 用该函数可以解决问题。
 # 数组: 数组类型也是object
 ## 方法
 Array.isArray(obj): 判断是否是Array类型  
@@ -330,6 +331,7 @@ reduce() 方法不会减少原始数组。
 
 ## 拷贝
 arr2 = [...arr1]是拷贝，arr2=arr1只是拷贝一个对arr1的引用
+
 # JSON
 ## parse(jsonString): 将JSON string转为object
 ## stringify(jsonFormatObject): 将json格式object转为string
