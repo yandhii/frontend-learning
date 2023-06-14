@@ -75,6 +75,7 @@ var signature = { r: 'b1fc...', s: '9c42...' }; // case 3
 // Verify signature
 console.log(key.verify(msgHash, signature));
 ```
+
 # PoW
 注意不能js里把crypto-js库的SHA256值转换为number。这是因为SHA256是256位的，最大值为2^256-1,而js number的最大安全整数值是2^53-1。  
 注意一个计算target的算法是2**(256-difficultyBits)，该方法使用difficultyBits是因为从0开始。假如difficulty是4，那么256-difficultyBits为252。而difficultyBits对应的位实际位251,因此这样确保了算法的正确。
