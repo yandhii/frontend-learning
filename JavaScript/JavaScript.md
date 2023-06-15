@@ -555,4 +555,52 @@ const counter = (function(){
 ```
 privateCounter和changeBy()是私有的。
 # 导入导出
+# 异步
+同步函数自顶向下按顺序执行，必须等待上一行代码执行完成。  
+异步函数不需要等待完成，可以同时执行其他的同步代码。
+## callback
+```js
+// callback
+let arr = [1,2,3];
+const func1 = (nextFunc) => {
+    setTimeout(() => console.log(arr + 'timeout1'), 1000);
+    console.log(arr + '0');
+    nextFunc();
+    console.log(arr + '1');
+};
 
+const func2 = () => {
+    arr.push(4);
+    setTimeout(() => console.log(arr + 'timeout2'), 2000);
+};
+
+func1(func2);
+```
+这段代码执行顺序如下：  
+1. 使用setTimeout 函数异步地输出数组 arr + 'timeout1' 的值，并设置延迟时间为 1 秒。继续往下执行。  
+2. 打印arr + '0'  
+3. 调用func2  
+4. 将4使用push方法加入到arr中  
+5. 使用setTimeout 函数异步地输出数组 arr + 'timeout2' 的值，并设置延迟时间为 2 秒。继续往下执行。  
+6. 打印arr + 'timeout1'  
+7. 打印arr + 'timeout2'  
+## Promise
+- 语法
+```js
+let createPromise = () => {
+    return new Promise((resolve, reject) => {
+        const error = false;
+        if(!error){
+            resolve();
+        }
+        else{
+            reject('Error');
+        }
+    })
+};
+```
+当生产代码获得结果后，应该调用两个callback函数(resolve, reject)之一:  
+| Result | Call |
+|--------|--------|
+| Success | |myResolve(result value)|
+| Error | |myReject(error object)|
