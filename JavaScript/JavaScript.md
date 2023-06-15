@@ -126,7 +126,21 @@ var z = new Boolean();       //	把 z 声明为 Boolean 对象
 ## 字符串模板
 使用(\`)来定义字符串，可以同时使用单引号和双引号。  
 模板字面量允许多行字符串。  
-模板字面量提供了一种将变量和表达式插入字符串的简单方法： ```let text = `Welcome ${firstName}, ${lastName}!`;```
+模板字面量提供了一种将变量和表达式插入字符串的简单方法： ```let text = `Welcome ${firstName}, ${lastName}!`;```  
+### 标签模板: https://www.zhangxinxu.com/wordpress/2021/12/js-tagged-templates/
+```js
+// tagged template literals
+function tag(strings, ...values){
+    console.log(strings);
+    console.log(values);
+}
+let a = 5;
+let b = 10;
+tag`Hello ${a+b} world ${a*b}`;
+```
+其中，strings 指的是被 ${...} 这种表达式分隔的字符串。  
+...values(exp1, exp2, ...)分别表示第1个 ${...} 占位符中表达式的值，第2个 ${...} 表达式的值。  
+上例中string = ['Hello ', ' world ', ''],最后一个字符串表示最后一个${...}后面的字符。values=[a+b, a*b]。    
 ## 转义字符
 添加```\```来转义', ", \  
 为了最佳可读性， 程序员们通常会避免每行代码超过 80 个字符串。  
@@ -296,6 +310,42 @@ set之后，可以直接对 obj.name赋值: obj=5
 ## 方法：
 hasOwnProperty(proprtyName): 判断一个obj是否有某个属性
 Object.values()： object会被打印为[object Object]， 用该函数可以解决问题。
+# Symbol: Symbol类型是symbol
+**Symbol表示独一无二的值,Symbol 值不是对象,它是一种类似于字符串的数据类型**
+- Symbol是unique的
+```js
+let s1 = Symbol('s');
+let s2 = Symbol('s');
+// s1 != s2
+console.log(s1 === s2)
+```
+- Symbol 值作为对象属性名时，不能用点运算符。
+```js
+const mySymbol = Symbol();
+const a = {};
+
+a.mySymbol = 'Hello!';
+a[mySymbol] // undefined
+a['mySymbol'] // "Hello!"
+\\上面代码中，因为点运算符后面总是字符串，所以不会读取mySymbol作为标识名所指代的那个值，导致a的属性名实际上是一个字符串，而不是一个 Symbol 值
+
+同理：在对象的内部，使用 Symbol 值定义属性时，Symbol 值必须放在方括号之中。
+let s = Symbol();
+
+let obj = {
+  [s]: function (arg) { ... }
+};
+
+obj[s](123);
+```
+相同参数的Symbol函数的返回值是不相等的理由：Symbol函数的参数只是表示对当前 Symbol 值的描述
+- 属性名的遍历
+Symbol作为属性名，遍历对象的时候，该属性不会出现在for...in、for...of循环中，也不会被Object.keys()（返回指定对象的可枚举属性组成的数组）、Object.getOwnPropertyNames()(返回指定对象的所有自身属性组成的数组，包括不可枚举属性)、JSON.stringify()（JSON对象-->JSON字符串）返回。
+
+Object.getOwnPropertySymbols():获取指定对象的所有 Symbol 属性名组成的数组
+
+
+Reflect.ownKeys():返回所有类型的属性名（包括常规键名和 Symbol 键名）
 # 数组: 数组类型也是object
 ## 方法
 Array.isArray(obj): 判断是否是Array类型  
@@ -338,6 +388,117 @@ arr2 = [...arr1]是拷贝，arr2=arr1只是拷贝一个对arr1的引用
 日期字符串化: 在 JSON 中，不允许日期对象。JSON.stringify() 函数将把任何日期转换为字符串。  
 函数字符串化： 在 JSON 中，不允许函数作为对象值。JSON.stringify() 函数将从 JavaScript 对象删除任何函数，包括键和值：
 **避免在JSON中使用函数**
+# Proxy
+Proxy对象就是可以让你去对JavaScript中的一切合法对象的基本操作进行自定义.然后用你自定义的操作去覆盖其对象的基本操作.也就是当一个对象去执行一个基本操作时,其执行的过程和结果是你自定义的,而不是对象的。  
+```js
+let p = new Proxy(target, handler);
+```
+其中:  
+- target是你要代理的对象.它可以是JavaScript中的任何合法对象.如: (数组, 对象, 函数等等)  
+- handler是你要自定义操作方法的一个集合.
+- p是一个被代理后的新对象,它拥有target的一切属性和方法.只不过其行为和结果是在handler中自定义的.
+```js
+let obj = {
+    a: 1,
+    b: 2,
+    c: 'DIY'
+}
+
+const p = new Proxy(obj, {
+    get(target, key, value){
+        if(key === 'C'.toLowerCase()){
+            return "DIY";
+        }
+        else{
+            return target[key];
+        }
+    },
+
+    set(target, key, value){
+        if(value == 'DD'){
+            target[key] = 'DIYDIY';
+        }
+        else{
+            target[key] = value;
+        }
+    }
+})
+// p.c = DIY
+console.log(p.c);
+// p.d = 'DIYDIY'
+p.d = 'DD';
+console.log(p.d)
+```
+## 应用场景
+- 属性验证和过滤：使用 Proxy 可以拦截对象的读取和赋值操作，从而实现属性验证和过滤。例如，我们可以使用 Proxy 来确保对象的某个属性只能是特定类型的值：
+```javascript
+let person = new Proxy({}, {
+  set(target, key, value) {
+    if (typeof value !== 'string') {
+      throw new TypeError('Name must be a string');
+    }
+    target[key] = value;
+  }
+});
+
+person.name = 'Alice'; // 正常赋值
+person.name = 123; // 报错：Name must be a string
+```
+- 计算属性：使用 Proxy 可以拦截对象的读取操作，并根据需要动态计算属性的值。例如，我们可以使用 Proxy 来实现一个简单的计算属性：
+```javascript
+let person = new Proxy({
+  firstName: 'Alice',
+  lastName: 'Smith'
+}, {
+  get(target, key) {
+    if (key === 'fullName') {
+      return `${target.firstName} ${target.lastName}`;
+    }
+    return target[key];
+  }
+});
+
+console.log(person.firstName); // 输出 "Alice"
+console.log(person.lastName); // 输出 "Smith"
+console.log(person.fullName); // 输出 "Alice Smith"
+```
+- 拦截函数调用：使用 Proxy 可以拦截对象的函数调用操作，并根据需要动态生成函数的返回值。例如，我们可以使用 Proxy 来实现一个简单的延迟计算：
+```javascript
+let lazy = new Proxy({}, {
+  get(target, key) {
+    if (typeof target[key] === 'undefined') {
+      target[key] = Math.random();
+    }
+    return target[key];
+  }
+});
+
+console.log(lazy.foo); // 随机生成一个数值
+console.log(lazy.foo); // 返回上次生成的数值
+console.log(lazy.bar); // 随机生成一个数值
+console.log(lazy.bar); // 返回上次生成的数值
+```
+- 对象代理：使用 Proxy 可以代理一个对象，并在对象的读取和赋值操作中添加一些额外的逻辑。例如，我们可以使用 Proxy 来实现一个简单的对象缓存：
+```javascript
+let cache = new Proxy({}, {
+  get(target, key) {
+    if (typeof target[key] === 'undefined') {
+      target[key] = expensiveOperation();
+    }
+    return target[key];
+  }
+});
+
+function expensiveOperation() {
+  console.log('Performing expensive operation...');
+  return Math.random();
+}
+
+console.log(cache.foo); // 执行 expensiveOperation，随机生成一个数值
+console.log(cache.foo); // 直接返回上次生成的数值
+console.log(cache.bar); // 执行 expensiveOperation，随机生成一个数值
+console.log(cache.bar); // 直接返回上次生成的数值
+```
 # 运算符
 ## 三元运算符： ```a ? b : c ``` = if a return b else return c
 多重三元运算符: ```a ? b : c > 5 ? d : e ``` = 
@@ -393,3 +554,5 @@ const counter = (function(){
 })();
 ```
 privateCounter和changeBy()是私有的。
+# 导入导出
+
