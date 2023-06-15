@@ -585,8 +585,22 @@ func1(func2);
 6. 打印arr + 'timeout1'  
 7. 打印arr + 'timeout2'  
 ## Promise
+callback函数是作为参数传入另一个函数的函数。  
+一个Promise对象有state和result两个变量，当state为pending时代表正在处理。为fulfilled时会返回resolve()括号里的值，为rejected时会返回reject()括号里的值。  
+.then(): then里一般有两个函数，第一个当resolve了被处罚，第二个当reject了被触发。then创建一个新的Promise对象，当其被resolve或reject之后返回值。  
+.catch(): catch()当reject了触发  
+如想要在链中传递异常，请使用 .then().catch() 语法。如果想要在链中处理异常，请在 .then() 中传递两个回调函数。  
+
+.finally()：无论resolve还是reject都触发
+.all(): 输入数组格式的promise，按原数组顺序输出promise最后的值。
+Promise对象内置两个callback函数
+- 生产(producing)代码和消费(consuming)代码:
+  生产代码是可能需要一些时间的代码。  
+  消费代码是必须等待结果的代码。  
+  Promise是一个JavaScript对象,它将生成代码和使用代码链接在一起。
 - 语法
 ```js
+// 生产代码
 let createPromise = () => {
     return new Promise((resolve, reject) => {
         const error = false;
@@ -598,9 +612,45 @@ let createPromise = () => {
         }
     })
 };
+// 消费代码
+createPromise().then(
+    // 如果成功执行
+    () => {console.log('Success')},
+    // 如果失败执行
+    () => console.log('Fail')
+);
 ```
 当生产代码获得结果后，应该调用两个callback函数(resolve, reject)之一:  
 | Result | Call |
 |--------|--------|
-| Success | |myResolve(result value)|
-| Error | |myReject(error object)|
+| Success | resolve(result value)|
+| Error | reject(error object)|
+
+- Promise对象属性
+  Promise对象可以是: pending/ fulfilled/ rejected。
+  Promise对象有两个属性：state和result。
+  | myPromise.state	| myPromise.result |
+  |-----------------|-----------------|
+  | "pending"	| undefined |
+  | "fulfilled"	| a result value |
+  | "rejected"	| an error object|
+
+  **注意： 不能访问Promise属性state和result。必须使用一个Promise方法来处理Promise。**
+- Promise.all()：允许同时处理福哦个异步任务
+  Promise.all 实际上是一个 promise，它将一组 promise 作为输入（可迭代）。然后，当所有 promise 都执行或其中任何一个执行失败时，它就会执行。
+  例如，假设你有十个 promise（执行网络调用或数据库连接的异步操作），你必须知道所有 promise 何时执行，或者必须等到所有 promise 执行。因此，你正在将所有十个 promise 传递给 Promise.all。然后，当所有十个 promise 都执行，或者十个 promise 中的任何一个因错误而执行失败，Promise.all 本身作为一个 promise 将执行。
+  **注意：promise 的顺序不变**: 意思是，数组中的第一个 promise 执行后将是输出数组的第一个元素，第二个 promise 对应输出数组中的第二个元素，依此类推。
+  ```js
+  const promise1 = Promise.resolve();
+  const promise2 = 10;
+  const promise3 = new Promise((resolve, reject) =>{
+      setTimeout(resolve, 1000);
+  });
+  
+  Promise.all([promise1, promise2, promise3]).then(
+      val => console.log(val)
+  );
+  ```
+## async/ await
+await 关键字只能在 async 功能。  
+await 关键字使函数暂停执行 并等待已resolve的Promise,然后再继续:
