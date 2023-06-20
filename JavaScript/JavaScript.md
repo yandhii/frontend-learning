@@ -150,6 +150,8 @@ document.getElementById("demo").innerHTML =
 "Hello Kitty.";
 ```
 ## 方法
+### 比较
+a.localeCompare(b):如果a在b前返回负数，a在b后返回正数，a==b返回0。
 ### 长度：.length
 length 属性返回字符串的长度：```.length```
 ### 查找字符串中的字符串：
@@ -372,15 +374,25 @@ function func(){
 从AVG_TEMPERATURES里提取tomorrow对应的值，并赋值给tempOfTomorrow
 ## 以函数为参数的方法
 ### filter(filterFunc): 创建一个包含通过测试的数组元素的新数组
+filter参数: value(当前值), index(项目索引), array(数组本身)
 ### map(mapFunc)：map() 方法通过对每个数组元素执行函数来创建新数组。  
 map() 方法不会对没有值的数组元素执行函数。  
 map() 方法不会更改原始数组  
+map参数: value(当前值), index(项目索引), array(数组本身)
 ### reduce(): 在每个数组元素上运行函数，以生成（减少它）单个值。  
 reduce() 方法在数组中从左到右工作。另请参阅 reduceRight()。  
-reduce() 方法不会减少原始数组。
-
+reduce() 方法不会减少原始数组。  
+reduce参数: total(累计值)，value(当前值), index(项目索引), array(数组本身)
+reduce() 方法能够接受一个初始total值
 ## 拷贝
 arr2 = [...arr1]是拷贝，arr2=arr1只是拷贝一个对arr1的引用
+
+## 排序
+sort函数默认对字符串顺序进行排序，因此需要自定义排序函数。  
+在比较a,b两个值时，负值代表a应该放在b前面，正值代表a应该放在b后面，0代表不需要移动。  
+```js
+array.sort((a,b) => a-b);
+```
 
 # JSON
 ## parse(jsonString): 将JSON string转为object
@@ -654,3 +666,42 @@ createPromise().then(
 ## async/ await
 await 关键字只能在 async 功能。  
 await 关键字使函数暂停执行 并等待已resolve的Promise,然后再继续:
+# this
+在global scope, this所属的全局对象在node.js情况下是module, 浏览器里是window。
+## call和apply： 设置this的上下文
+call需要一个参数列表，apply需要一个参数数组。
+第一个参数是this，第二个参数是函数所需参数。
+```js
+totalThings.call("Students", 10, 3, 2);
+totalThings.apply("Students", [10, 3, 2]);
+```
+## bind：把一个函数绑定到一个对象（将该函数的this设置为该对象）
+也可以用来绑定参数。  
+```js
+function add(x, y) {
+    return x + y;
+}
+const addTwo = add.bind(null, 2);
+```
+函数被绑定后不能被覆盖:
+```js
+const newFunction = thisName.bind({ name: 'Ted' });
+
+const newFunction2 = newFunction.bind({ name: 'Walt' });
+console.log(newFunction2()); // Ted
+```
+## function和箭头函数的区别
+function的this取决于调用对象，箭头函数的this取决于定义时的外部作用域。
+## new
+在使用new创建一个对象实例时，会创建一个对象作为this。
+# prototype
+## Object.call(this)
+转移this到现在的函数
+## Object.create()
+将原型之间链接起来，继承原型的方法。  
+该方法之后，任何new的新实例都继承了链接的方法。
+## class
+class让原型的继承更简单。  
+### super: super调用原型链上一个原型的构造函数
+**注意super必须在使用this之前调用！！！！！！！！**
+### super.method()：super对象函数调用
