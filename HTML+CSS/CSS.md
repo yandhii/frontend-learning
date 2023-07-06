@@ -21,7 +21,7 @@ CSS描述HTML元素的样式，即如何显示HTML元素
 ## CSS
 text-decoration:underline
 ## position
-### relative
-### absolute
-### static
-### fixed
+### relative： 相对于前面的容器定位
+### absolute： 对整个page的定位
+### static： 默认，不能使用z-index
+### fixed: 对browser window的定位
