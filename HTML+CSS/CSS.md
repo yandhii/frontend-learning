@@ -27,3 +27,6 @@ text-decoration:underline
 ### static： 默认，不能使用z-index
 ### fixed: 对browser window的定位
 不能在fixed中嵌套absolute，因为fixed总是指向窗口。
+
+## 响应式设计
+
