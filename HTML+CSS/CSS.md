@@ -20,3 +20,8 @@ CSS描述HTML元素的样式，即如何显示HTML元素
 如何解决在html中被默认忽略的空格？：使用margin属性
 ## CSS
 text-decoration:underline
+## position
+### relative
+### absolute
+### static
+### fixed
